@@ -27,7 +27,7 @@ jobs:
           LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
           SET_TAG: ${{ steps.get-tag-name.outputs.VERSION }}
         run: |
-          echo ::set-output name=IS_BRANCH::includes($SET_TAG, 'heads') name=IMAGE_TAG=coalesce($SET_TAG, $LATEST_TAG)
+          echo ::set-output name=IS_BRANCH::${{ includes($SET_TAG, 'heads') }} name=IMAGE_TAG::${{ coalesce($SET_TAG, $LATEST_TAG) }}
         
       - name: Check tag values
         env:
