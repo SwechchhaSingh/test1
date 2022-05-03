@@ -21,12 +21,20 @@ jobs:
         id: latest-tag
         uses: WyriHaximus/github-action-get-previous-tag@master
         
+      - name: Set Image tag
+        id: image-tag
+        env:
+          LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
+          SET_TAG: ${{ steps.get-tag-name.outputs.VERSION }}
+        run: |
+          echo ::set-output name=IS_BRANCH::includes($SET_TAG, 'heads') name=IMAGE_TAG=coalesce($SET_TAG, $LATEST_TAG)
+        
       - name: Check tag values
         env:
           LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
           SET_TAG: ${{ steps.get-tag-name.outputs.VERSION }}
-          IS_BRANCH: ${{ includes($SET_TAG, 'heads') }}
-          IMAGE_TAG: ${{ coalesce($SET_TAG, $LATEST_TAG) }}
+          IS_BRANCH: ${{ steps.image-tag.outputs.IS_BRANCH }}
+          IMAGE_TAG: ${{ steps.image-tag.outputs.IMAGE_TAG }}
         run: |
           echo $LATEST_TAG
           echo $SET_TAG
