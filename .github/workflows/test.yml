@@ -16,18 +16,30 @@ jobs:
       - name: Get tag name
         id: get-tag-name
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        
+      - name: Get branch for which workflow has been triggered
+        id: get-branch
+        run: echo ::set-output name=BRANCH::${GITHUB_REF/refs\/heads\//}
 
       - name: Get latest release tag
         id: latest-tag
         uses: WyriHaximus/github-action-get-previous-tag@master
         
+      - if: contains( ${{ steps.get-tag-name.outputs.VERSION }}, 'heads')
+        run: |
+          echo ::set-output IS_BRANCH::true
+          echo ${{ steps.get-branch.outputs.BRANCH }}
+          echo "IS_ON_BRANCH=true" >> $GITHUB_ENV
+        id: is-branch
+        
       - name: Set Image tag
         id: image-tag
         env:
-          LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
           SET_TAG: ${{ steps.get-tag-name.outputs.VERSION }}
         run: |
-          echo ::set-output name=IS_BRANCH::${{ includes($SET_TAG, 'heads') }} name=IMAGE_TAG::${{ coalesce($SET_TAG, $LATEST_TAG) }}
+          echo $IS_ON_BRANCH
+          echo ::set-output name=IS_BRANCH::contains($SET_TAG, 'heads') 
+          echo ::set-output name=IMAGE_TAG::coalesce($SET_TAG, $LATEST_TAG)
         
       - name: Check tag values
         env:
