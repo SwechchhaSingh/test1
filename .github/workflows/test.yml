@@ -29,7 +29,7 @@ jobs:
         id: is-branch
         if: contains( ${{ steps.get-tag-name.outputs.VERSION }}, 'heads')
         run: |
-          echo ::set-output IS_BRANCH::true
+          echo ::set-output name=IS_BRANCH::true
           echo ${{ steps.get-branch.outputs.BRANCH }}
           echo "IS_ON_BRANCH=true" >> $GITHUB_ENV
       
