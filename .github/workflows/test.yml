@@ -25,8 +25,10 @@ jobs:
         env:
           LATEST_TAG: ${{steps.latest-tag.outputs.tag}}
           SET_TAG: ${{steps.get-tag-name.outputs.VERSION}}
-          IMAGE_TAG: "{% if 'heads' in $SET_TAG %} $LATEST_TAG {% else %} $SET_TAG {% endif %}"
+          IS_BRANCH: includes($SET_TAG, 'heads')
+          IMAGE_TAG: coalesce($SET_TAG, $LATEST_TAG)
         run: |
+          echo $LATEST_TAG
+          echo $SET_TAG
+          echo $IS_BRANCH
           echo $IMAGE_TAG
-          echo ${{steps.latest-tag.outputs.tag}}
-          echo ${{steps.get-tag-name.outputs.VERSION}}
