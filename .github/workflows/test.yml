@@ -17,6 +17,10 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      
+      - name: Get tag name
+        id: get_tag_name
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Get latest release tag
         id: latest-tag
@@ -29,3 +33,6 @@ jobs:
           echo $IMAGE_TAG
           echo ${{ github.event.inputs.tag }}
           echo ${{steps.latest-tag.outputs.tag}}
+          echo $VERSION
+          echo ${{steps.get_tag_name.outputs.VERSION}}
+          echo ${{steps.get_tag_name.outputs}}
