@@ -23,7 +23,9 @@ jobs:
         
       - name: Check tag values
         env:
-          IMAGE_TAG: ${{steps.latest-tag.outputs.tag}} || ${{steps.get-tag-name.outputs.VERSION}}
+          LATEST_TAG: ${{steps.latest-tag.outputs.tag}}
+          SET_TAG: ${{steps.get-tag-name.outputs.VERSION}}
+          IMAGE_TAG: "{% if 'heads' in $SET_TAG %} $LATEST_TAG {% else %} $SET_TAG {% endif %}"
         run: |
           echo $IMAGE_TAG
           echo ${{steps.latest-tag.outputs.tag}}
