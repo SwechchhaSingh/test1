@@ -23,10 +23,10 @@ jobs:
         
       - name: Check tag values
         env:
-          LATEST_TAG: ${{steps.latest-tag.outputs.tag}}
-          SET_TAG: ${{steps.get-tag-name.outputs.VERSION}}
-          IS_BRANCH: includes($SET_TAG, 'heads')
-          IMAGE_TAG: coalesce($SET_TAG, $LATEST_TAG)
+          LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
+          SET_TAG: ${{ steps.get-tag-name.outputs.VERSION }}
+          IS_BRANCH: ${{ includes($SET_TAG, 'heads') }}
+          IMAGE_TAG: ${{ coalesce($SET_TAG, $LATEST_TAG) }}
         run: |
           echo $LATEST_TAG
           echo $SET_TAG
