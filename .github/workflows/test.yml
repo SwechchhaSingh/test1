@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 # Controls when the workflow will run
@@ -28,11 +26,8 @@ jobs:
         
       - name: Build, tag, and push image to Amazon ECR
         env:
-          IMAGE_TAG: ${{ github.event.inputs.tag }} || ${{steps.latest-tag.outputs.tag}}
+          IMAGE_TAG: ${{ github.event.inputs.tag }} || ${{steps.latest-tag.outputs.tag}} || ${{steps.get_tag_name.outputs.VERSION}}
         run: |
           echo $IMAGE_TAG
-          echo ${{ github.event.inputs.tag }}
           echo ${{steps.latest-tag.outputs.tag}}
-          echo $VERSION
           echo ${{steps.get_tag_name.outputs.VERSION}}
-          echo ${{steps.get_tag_name.outputs}}
