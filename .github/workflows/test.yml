@@ -15,41 +15,52 @@ jobs:
       
       - name: Get tag name
         id: get-tag-name
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo "TAG::${GITHUB_REF/refs\/tags\//" >> $GITHUB_ENV
         
       - name: Get branch for which workflow has been triggered
         id: get-branch
-        run: echo ::set-output name=BRANCH::${GITHUB_REF/refs\/heads\//}
+        run: echo "BRANCH=${GITHUB_REF/refs\/heads\//" >> $GITHUB_ENV
 
       - name: Get latest release tag
         id: latest-tag
         uses: WyriHaximus/github-action-get-previous-tag@master
         
-      - name: Set is branch to github env
-        id: is-branch
-        if: contains( ${{ steps.get-tag-name.outputs.VERSION }}, 'heads')
-        run: |
-          echo ::set-output name=IS_BRANCH::true
-          echo ${{ steps.get-branch.outputs.BRANCH }}
-          echo "IS_ON_BRANCH=true" >> $GITHUB_ENV
-      
-      - name: Set Image tag
-        id: image-tag
+      - name: Set default Image tag to be latest tag
         env:
-          SET_TAG: ${{ steps.get-tag-name.outputs.VERSION }}
+          LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
+        run: echo "IMAGE_TAG=$LATEST_TAG" >> $GITHUB_ENV
+        
+      - name: Set Image tag if triggered using branch
+        if: contains( $TAG, 'heads')
         run: |
-          echo $IS_ON_BRANCH
-          echo ::set-output name=IS_BRANCH::contains($SET_TAG, 'heads') 
-          echo ::set-output name=IMAGE_TAG::coalesce($SET_TAG, $LATEST_TAG)
+          echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
+          
+      - name: Set Image tag if triggered using tag
+        if: contains( $BRANCH, 'tags')
+        run: |
+          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
         
       - name: Check tag values
         env:
           LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
-          SET_TAG: ${{ steps.get-tag-name.outputs.VERSION }}
-          IS_BRANCH: ${{ steps.image-tag.outputs.IS_BRANCH }}
-          IMAGE_TAG: ${{ steps.image-tag.outputs.IMAGE_TAG }}
         run: |
           echo $LATEST_TAG
-          echo $SET_TAG
-          echo $IS_BRANCH
+          echo $TAG
+          echo $BRANCH
+          echo $IMAGE_TAG
+          
+  check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Check env vars exist
+        run: |
+          echo $LATEST_TAG
+          echo $TAG
+          echo $BRANCH
           echo $IMAGE_TAG
