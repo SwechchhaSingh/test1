@@ -14,17 +14,17 @@ jobs:
           fetch-depth: 0
       
       - name: Get tag name
-        id: get_tag_name
+        id: get-tag-name
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Get latest release tag
         id: latest-tag
         uses: WyriHaximus/github-action-get-previous-tag@master
         
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Check tag values
         env:
-          IMAGE_TAG: ${{ github.event.inputs.tag }} || ${{steps.latest-tag.outputs.tag}} || ${{steps.get_tag_name.outputs.VERSION}}
+          IMAGE_TAG: ${{steps.latest-tag.outputs.tag}} || ${{steps.get-tag-name.outputs.VERSION}}
         run: |
           echo $IMAGE_TAG
           echo ${{steps.latest-tag.outputs.tag}}
-          echo ${{steps.get_tag_name.outputs.VERSION}}
+          echo ${{steps.get-tag-name.outputs.VERSION}}
