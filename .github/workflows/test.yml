@@ -32,14 +32,14 @@ jobs:
         
       - name: Set Image tag if triggered using branch
         run: |
-          if [ contains( $TAG, 'heads') ]; then
+          if [ $TAG == *"heads"* ]; then
             echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
             exit 1
           fi
          
       - name: Set Image tag if triggered using tag
         run: |      
-          if [ contains( $BRANCH, 'tags') ]; then
+          if [ $BRANCH == *"tags"* ]; then
             echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
             exit 1
           fi
