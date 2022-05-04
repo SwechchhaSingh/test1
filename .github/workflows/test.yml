@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    outputs:
+      IMAGE_TAG: ${{ steps.image-tag.outputs.IMAGE_TAG }}
 
     steps:
       - name: Checkout Code
@@ -31,32 +34,32 @@ jobs:
         run: echo "IMAGE_TAG=$LATEST_TAG" >> $GITHUB_ENV
         
       - name: Set Image tag if triggered using branch
+        id: image-tag
         run: |
-          if [[ $TAG == *$BRANCH ]]; then
+          if [ $TAG == *$BRANCH ];
+          then
             echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
-            echo "done"
-            exit 1
-          fi
-         
-      - name: Set Image tag if triggered using tag
-        run: |      
-          if [ $BRANCH == *"tags"* ]; then
+          else if [ $BRANCH == *$TAG ];
+          then
             echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
-            echo "finally"
-            exit 1
           fi
+          echo ::set-output name=IMAGE_TAG::$IMAGE_TAG
         
       - name: Check tag values
         env:
           LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
+          IMAGE_TAG_OUTPUT: ${{ steps.image-tag.outputs.IMAGE_TAG }}
         run: |
           echo $LATEST_TAG
           echo $TAG
           echo $BRANCH
           echo $IMAGE_TAG
+          echo $IMAGE_TAG_OUTPUT
           
   check:
     runs-on: ubuntu-latest
+    
+    needs: build
     
     steps:
       - name: Checkout Code
@@ -64,9 +67,6 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Check env vars exist
+      - name: Check previous job output is available
         run: |
-          echo $LATEST_TAG
-          echo $TAG
-          echo $BRANCH
-          echo $IMAGE_TAG
+          echo ${{ needs.build.outputs.IMAGE_TAG }}
