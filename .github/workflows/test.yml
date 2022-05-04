@@ -34,11 +34,11 @@ jobs:
         run: echo "IMAGE_TAG=$LATEST_TAG" >> $GITHUB_ENV
         
       - name: Check value
-        if: startsWith($TAG, 'refs/heads/')
+        if: startsWith(${GITHUB_REF/refs\/tags\//}, 'refs/heads/')
         run: echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
         
       - name: Check branch value
-        if: startsWith($BRANCH, 'refs/tags/')
+        if: startsWith(${GITHUB_REF/refs\/heads\//}, 'refs/tags/')
         run: echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
         
 #       - name: Set Image tag if triggered using branch
