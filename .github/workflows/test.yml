@@ -24,6 +24,7 @@ jobs:
         id: get-branch
         run: echo "BRANCH=${GITHUB_REF/refs\/heads\//}" >> $GITHUB_ENV
 
+      # Might not need this
       - name: Get latest release tag
         id: latest-tag
         uses: WyriHaximus/github-action-get-previous-tag@master
