@@ -64,6 +64,7 @@ jobs:
           echo $BRANCH
           echo $IMAGE_TAG
           echo $IMAGE_TAG_OUTPUT
+          echo github.ref
           
   check:
     runs-on: ubuntu-latest
