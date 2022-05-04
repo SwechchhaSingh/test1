@@ -17,11 +17,9 @@ jobs:
           fetch-depth: 0
       
       - name: Get tag name
-        id: get-tag-name
         run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
         
       - name: Get branch for which workflow has been triggered
-        id: get-branch
         run: echo "BRANCH=${GITHUB_REF/refs\/heads\//}" >> $GITHUB_ENV
 
       # Might not need this
@@ -34,15 +32,15 @@ jobs:
           LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
         run: echo "IMAGE_TAG=$LATEST_TAG" >> $GITHUB_ENV
         
-      - name: Check github ref value for branch
+      - name: Set Image tag to be branch name if workflow is triggered for branch
         if: ${{ startsWith(github.ref, 'refs/heads/') }}
         run: echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
         
-      - name: Check github ref value for tag
+      - name: Set Image tag to be tag name if workflow is triggered for tag
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
         
-      - name: Get image tag
+      - name: Get final image tag
         id: image-tag
         run: echo ::set-output name=IMAGE_TAG::$IMAGE_TAG
           
