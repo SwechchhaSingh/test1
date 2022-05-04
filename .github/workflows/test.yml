@@ -31,14 +31,18 @@ jobs:
         run: echo "IMAGE_TAG=$LATEST_TAG" >> $GITHUB_ENV
         
       - name: Set Image tag if triggered using branch
-        if: contains( $TAG, 'heads')
         run: |
-          echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
-          
+          if [ contains( $TAG, 'heads') ]; then
+            echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
+            exit 1
+          fi
+         
       - name: Set Image tag if triggered using tag
-        if: contains( $BRANCH, 'tags')
-        run: |
-          echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+        run: |      
+          if [ contains( $BRANCH, 'tags') ]; then
+            echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+            exit 1
+          fi
         
       - name: Check tag values
         env:
