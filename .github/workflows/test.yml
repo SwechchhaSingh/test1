@@ -32,8 +32,9 @@ jobs:
         
       - name: Set Image tag if triggered using branch
         run: |
-          if [ $TAG == *"heads"* ]; then
+          if [[ $TAG == *$BRANCH ]]; then
             echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
+            echo "done"
             exit 1
           fi
          
@@ -41,6 +42,7 @@ jobs:
         run: |      
           if [ $BRANCH == *"tags"* ]; then
             echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
+            echo "finally"
             exit 1
           fi
         
