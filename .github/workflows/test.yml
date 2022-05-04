@@ -34,17 +34,20 @@ jobs:
         run: echo "IMAGE_TAG=$LATEST_TAG" >> $GITHUB_ENV
         
       - name: Set Image tag if triggered using branch
-        id: image-tag
+        id: set-image-tag
         run: |
-          if [ $TAG == *$BRANCH ];
+          if [ $TAG == *$BRANCH* ];
           then
             echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
-          else if [ $BRANCH == *$TAG ];
+          else if [ $BRANCH == *$TAG* ];
           then
             echo "IMAGE_TAG=$TAG" >> $GITHUB_ENV
           fi
-          echo ::set-output name=IMAGE_TAG::$IMAGE_TAG
-        
+          
+      - name: Get image tag
+        id: image-tag
+        run: echo ::set-output name=IMAGE_TAG::$IMAGE_TAG
+          
       - name: Check tag values
         env:
           LATEST_TAG: ${{ steps.latest-tag.outputs.tag }}
